@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FITNESS TRACKER PRO</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#101827;color:white}
+header{background:#172438;padding:22px;text-align:center}
+h1{color:#55e6a5;font-size:25px}
+main{max-width:600px;margin:auto;padding:16px}
+.card{background:#1c2a3e;padding:18px;margin:15px 0;border-radius:15px}
+input,button{width:100%;padding:13px;margin:7px 0;border-radius:8px;border:0}
+button{background:#42dfa0;font-weight:bold}
+nav{display:flex;gap:8px;flex-wrap:wrap}
+nav button{flex:1;min-width:100px}
+small{color:#aab8cb}
+</style>
+</head>
+<body>
+<header>
+<h1>💪 FITNESS TRACKER PRO</h1>
+<small>Your fitness journey starts here</small>
+</header>
+<main>
+<div class="card">
+<h2>👋 Welcome!</h2>
+<p>Track your daily fitness progress.</p>
+</div>
+<nav>
+<button onclick="show('workout')">🏋️ Workout</button>
+<button onclick="show('food')">🍎 Food</button>
+<button onclick="show('water')">💧 Water</button>
+<button onclick="show('progress')">📊 Progress</button>
+</nav>
+<div id="app"></div>
+</main>
+<script>
+function show(page){
+let app=document.getElementById('app');
+if(page==='workout'){
+app.innerHTML='<div class="card"><h2>🏋️ Workout Log</h2><input id="exercise" placeholder="Exercise name"><input id="sets" type="number" placeholder="Sets"><input id="reps" type="number" placeholder="Reps"><button onclick="saveWorkout()">Save Workout</button><div id="workouts"></div></div>';
+listWorkouts();
+}
+if(page==='food'){
+app.innerHTML='<div class="card"><h2>🍎 Food Diary</h2><input id="meal" placeholder="Food name"><input id="cal" type="number" placeholder="Calories"><input id="protein" type="number" placeholder="Protein (g)"><button onclick="saveFood()">Add Food</button><div id="foods"></div></div>';
+listFoods();
+}
+if(page==='water'){
+app.innerHTML='<div class="card"><h2>💧 Water Tracker</h2><p id="watercount"></p><button onclick="addWater()">＋ Add 250 ml water</button></div>';
+waterDisplay();
+}
+if(page==='progress'){
+app.innerHTML='<div class="card"><h2>📊 Your Progress</h2><p id="summary"></p></div>';
+document.getElementById('summary').innerText='Workouts: '+JSON.parse(localStorage.getItem('workouts')||'[]').length+' | Food entries: '+JSON.parse(localStorage.getItem('foods')||'[]').length+' | Water: '+(localStorage.getItem('water')||0)+' ml';
+}
+}
+function saveWorkout(){
+let a=JSON.parse(localStorage.getItem('workouts')||'[]');
+a.push({name:document.getElementById('exercise').value,sets:document.getElementById('sets').value,reps:document.getElementById('reps').value});
+localStorage.setItem('workouts',JSON.stringify(a));listWorkouts();
+}
+function listWorkouts(){
+let e=document.getElementById('workouts');if(!e)return;
+e.innerHTML=JSON.parse(localStorage.getItem('workouts')||'[]').map(x=>'<p>'+x.name+' — '+x.sets+' sets × '+x.reps+' reps</p>').join('');
+}
+function saveFood(){
+let a=JSON.parse(localStorage.getItem('foods')||'[]');
+a.push({name:document.getElementById('meal').value,cal:document.getElementById('cal').value,protein:document.getElementById('protein').value});
+localStorage.setItem('foods',JSON.stringify(a));listFoods();
+}
+function listFoods(){
+let e=document.getElementById('foods');if(!e)return;
+e.innerHTML=JSON.parse(localStorage.getItem('foods')||'[]').map(x=>'<p>'+x.name+' — '+x.cal+' kcal, '+x.protein+' g protein</p>').join('');
+}
+function addWater(){localStorage.setItem('water',Number(localStorage.getItem('water')||0)+250);waterDisplay()}
+function waterDisplay(){let e=document.getElementById('watercount');if(e)e.innerText='Today: '+(localStorage.getItem('water')||0)+' ml'}
+show('progress');
+</script>
+</body>
+</html>
